@@ -1,4 +1,4 @@
-local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Syed-gh/scripts/main/test.lua'))()
 local UIS = game:GetService("UserInputService")
 local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}})
 local Tab = Window:AddTab("Local")
@@ -202,6 +202,7 @@ lptog = plrsect:AddToggle({
 				if game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick") then
 					local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick")
 					game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
+					initlp()
 					Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
 				else
 					Library:Notification({Content = "You must wait to spawn a lockpick"})
@@ -213,6 +214,7 @@ lptog = plrsect:AddToggle({
 			elseif game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick") then
 				local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick")
 				game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
+				initlp()
 				Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
 			end
 		else
