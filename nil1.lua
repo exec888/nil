@@ -200,33 +200,30 @@ function getClosestNotOwnedPrinter() -- thanks luna
 		end)
 	end
 	return Target
-end
+end		
 function initlp()
 	lpconnection = UIS.InputBegan:Connect(function(input)
-		if UIS:IsKeyDown(Enum.KeyCode.X) then
-			--for _,v in pairs(game.Workspace.MoneyPrinters:GetChildren()) do
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			local x = getClosestNotOwnedPrinter()
-			local retries = 0
-			if x.TrueOwner.Locked.Value == true then
-				spawn(function()
-					repeat
-						game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, x)
-						game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, x)
-						wait(0.25)
-					until x.TrueOwner.Locked.Value == false or retries == 5
-				end)
-				for retry = 0, 5, 1 do
-					retries += 1
-				end
-			end
-
+			local Mouse = game.Players.LocalPlayer:GetMouse()
+			--if x.TrueOwner.Locked.Value == true then
+			--	spawn(function()
+			--		repeat
+			game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, Mouse.Target.Parent)
+			game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, Mouse.Target.Parent)
+			--			wait(0.25)
+			--		until x.TrueOwner.Locked.Value == false-- or retries == 5
+			--	end)
 			--end
-			--for _,v in pairs(game.Workspace.Entities:GetChildren()) do
-			--local v = GetClosestItem()
-			--if v:FindFirstChild("MeshPart") or v:FindFirstChild("Handle") then
-			--game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, v)
-			--game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, v)
-			--end
+			--local v = getClosestNotShipment()
+			--if v.TrueOwner.Locked.Value == true then
+			--	spawn(function()
+			--		repeat
+			--			game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, v)
+			--			game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, v)
+			--			wait(0.25)
+			--		until x.TrueOwner.Locked.Value == false
+			--	end)
 			--end
 		end
 	end)
@@ -247,7 +244,7 @@ lptog = plrsect:AddToggle({
 					local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick")
 					game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
 					initlp()
-					Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
+					Library:Notification({Title = "Insta-Lockpick", Content = "Click on printer to Insta-Lockpick"})
 				else
 					Library:Notification({Content = "You must wait to spawn a lockpick"})
 					lptog:Set(false)
@@ -259,13 +256,13 @@ lptog = plrsect:AddToggle({
 				local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick")
 				game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
 				initlp()
-				Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
+				Library:Notification({Title = "Insta-Lockpick", Content = "Click on printer to Insta-Lockpick"})
 			elseif game.Players.LocalPlayer.Character:FindFirstChild(job.." Lockpick") then
 				initlp()
-				Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
+				Library:Notification({Title = "Insta-Lockpick", Content = "Click on printer to Insta-Lockpick"})
 			end
 		else
-			lpconnection = nil
+			lpconnection:Disconnect()
 		end
 	end
 })
