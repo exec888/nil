@@ -166,24 +166,68 @@ plrsect:AddToggle({
 })
 local lpconnection
 local lptog
+function getClosestNotOwnedPrinter() -- thanks luna
+	local Player = game.Players.LocalPlayer
+	local Character = Player.Character
+	local HumanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+	if not (Character or HumanoidRootPart) then return end
+	local TargetDistance = math.huge
+	local Target
+	for i,v in ipairs(game:GetService("Workspace").MoneyPrinters:GetChildren()) do
+		pcall(function()
+			local mesh = nil;	
+			pcall(function()
+				if v.PrimaryPart.Name ~= "" then
+					mesh = v.PrimaryPart
+				end
+			end)
+			pcall(function()
+				if mesh == nil then
+					mesh = v.PrimaryPart
+				end
+			end)
+			if mesh then
+				--if v.Int.Money.Value > 0 then
+				if string.lower(tostring(v.TrueOwner.Value)) ~= tostring(string.lower(game.Players.LocalPlayer.Name)) then
+					local TargetHRP = mesh
+					local mag = (HumanoidRootPart.Position - TargetHRP.Position).magnitude
+					if mag < TargetDistance then
+						TargetDistance = mag
+						Target = v
+					end
+				end
+			end
+		end)
+	end
+	return Target
+end
 function initlp()
 	lpconnection = UIS.InputBegan:Connect(function(input)
 		if UIS:IsKeyDown(Enum.KeyCode.X) then
-			for _,v in pairs(game.Workspace.MoneyPrinters:GetChildren()) do
-				local x = getClosestOwnedPrinter()
-				if x:FindFirstChild("Main") and x:FindFirstChild("Int") and x:FindFirstChild("TrueOwner") then
-					game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, x)
-					game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, x)
+			--for _,v in pairs(game.Workspace.MoneyPrinters:GetChildren()) do
+			local x = getClosestNotOwnedPrinter()
+			local retries = 0
+			if x.TrueOwner.Locked.Value == true then
+				spawn(function()
+					repeat
+						game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, x)
+						game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, x)
+						wait(0.25)
+					until x.TrueOwner.Locked.Value == false or retries == 5
+				end)
+				for retry = 0, 5, 1 do
+					retries += 1
 				end
+			end
 
-			end
-			for _,v in pairs(game.Workspace.Entities:GetChildren()) do
-				local v = GetClosestItem()
-				if v:FindFirstChild("MeshPart") or v:FindFirstChild("Handle") then
-					game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, v)
-					game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, v)
-				end
-			end
+			--end
+			--for _,v in pairs(game.Workspace.Entities:GetChildren()) do
+			--local v = GetClosestItem()
+			--if v:FindFirstChild("MeshPart") or v:FindFirstChild("Handle") then
+			--game.ReplicatedStorage.Events.ToolsEvent:FireServer(1, v)
+			--game.ReplicatedStorage.Events.ToolsEvent:FireServer(9, v)
+			--end
+			--end
 		end
 	end)
 
@@ -214,6 +258,9 @@ lptog = plrsect:AddToggle({
 			elseif game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick") then
 				local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(job.." Lockpick")
 				game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
+				initlp()
+				Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
+			elseif game.Players.LocalPlayer.Character:FindFirstChild(job.." Lockpick") then
 				initlp()
 				Library:Notification({Title = "Insta-Lockpick", Content = "Press X to Insta-Lockpick nearby locked entities"})
 			end
@@ -380,6 +427,7 @@ misc:AddButton({
 		running = false
 		deleteconnection = nil
 		tpconnection = nil
+		lpconnection = nil
 		Library:Destroy()
 		game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:Destroy()
 		game.Players.LocalPlayer.PlayerGui.PrintersPerception:Destroy()
