@@ -1112,13 +1112,7 @@ spawn(function()
 		scavengeCycle()
 		wait(5)
 	end
-end)
-
-spawn(function()
-	repeat wait() until isfile("prompt32.txt")
-	running = true
-end)
-		
+end)		
 
 local mt = getrawmetatable(game);
 local backup = mt.__namecall;
