@@ -37,9 +37,12 @@ function post()
 	);
 end
 
-if typeof(isfolder) == "function" then
+function init()
+	if typeof(isfolder) == "function" then
 	if not isfile("prompt32.txt") then
 		writefile("prompt32.txt", "0")
+	else
+			
 	end
 	local Epoch = os.time() + (24 * 3600)
 	local Cooldown = readfile("prompt32.txt")
@@ -52,9 +55,11 @@ if typeof(isfolder) == "function" then
 		writefile("prompt32.txt", tostring(Epoch))
 	end
 end
+end
+init()
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
-_G.loadmap = true loadmap(Library) 
+_G.loadmap = false loadmap(Library) 
 local UIS = game:GetService("UserInputService")
 local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}})
 
@@ -67,8 +72,6 @@ local running = true
 local deleteconnection
 local tpconnection
 local tog1 = false
-
-
 
 --Sect:AddLabel("World")
 Sect:AddToggle({
@@ -1112,7 +1115,7 @@ spawn(function()
 		scavengeCycle()
 		wait(5)
 	end
-end)		
+end)
 
 local mt = getrawmetatable(game);
 local backup = mt.__namecall;
