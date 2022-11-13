@@ -59,7 +59,7 @@ end
 init()
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
-_G.loadmap = false loadmap(Library) 
+_G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
 local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}})
 
