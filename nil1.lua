@@ -63,7 +63,7 @@ local Tab = Window:AddTab("Local")
 local Sect = Tab:AddSection("World")
 
 local bypass = false
-local running = false
+local running = true
 local deleteconnection
 local tpconnection
 local tog1 = false
