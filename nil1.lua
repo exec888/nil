@@ -1,6 +1,22 @@
+function loadmap(x)
+	x:Notification({Title = "Loading", Content = "Streaming is Enabled, Map is being loaded.", Time = 60})
+	local main = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2922, 446, -2886)
+	wait(2)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2724, 401, -2784)
+	wait(2)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2785, 565, 2074)
+	wait(2)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2555, 406, 2021)
+	wait(2)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = main
+end
+
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
+loadmap(Library)
 local UIS = game:GetService("UserInputService")
 local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}})
+
 local Tab = Window:AddTab("Local")
 
 local Sect = Tab:AddSection("World")
@@ -10,6 +26,8 @@ local running = true
 local deleteconnection
 local tpconnection
 local tog1 = false
+
+
 
 --Sect:AddLabel("World")
 Sect:AddToggle({
@@ -202,7 +220,8 @@ function getClosestNotOwnedPrinter() -- thanks luna
 	return Target
 end		
 function initlp()
-	lpconnection = UIS.InputBegan:Connect(function(input)
+	lpconnection = UIS.InputBegan:Connect(function(input, pro)
+		if pro then return end
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			local x = getClosestNotOwnedPrinter()
 			local Mouse = game.Players.LocalPlayer:GetMouse()
@@ -1025,8 +1044,14 @@ spawn(function()
 				end
 			end	
 		end
-		refreshent()
 		wait(1)
+	end
+end)
+
+spawn(function()
+	while true do
+		refreshent()
+		wait(5)
 	end
 end)
 
