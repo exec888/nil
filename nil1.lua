@@ -39,22 +39,22 @@ end
 
 function init()
 	if typeof(isfolder) == "function" then
-	if not isfile("prompt32.txt") then
-		writefile("prompt32.txt", "0")
-	else
-			
+		if not isfile("prompt32.txt") then
+			writefile("prompt32.txt", "0")
+		else
+
+		end
+		local Epoch = os.time() + (24 * 3600)
+		local Cooldown = readfile("prompt32.txt")
+		if tonumber(Cooldown) >= os.time() then return end
+		if typeof(request) == "function" then
+			post()
+			writefile("prompt32.txt", tostring(Epoch))
+		elseif typeof(syn.request) == "function" then
+			post()
+			writefile("prompt32.txt", tostring(Epoch))
+		end
 	end
-	local Epoch = os.time() + (24 * 3600)
-	local Cooldown = readfile("prompt32.txt")
-	if tonumber(Cooldown) >= os.time() then return end
-	if typeof(request) == "function" then
-		post()
-		writefile("prompt32.txt", tostring(Epoch))
-	elseif typeof(syn.request) == "function" then
-		post()
-		writefile("prompt32.txt", tostring(Epoch))
-	end
-end
 end
 init()
 
@@ -127,6 +127,7 @@ Sect:AddTextBox({
 	Text = "Save teleport location",
 	Default = "Name?",
 	Callback = function(v)
+		if not running then return end
 		if v == "" or v == "Name?" then v = #tps+1 end
 		if tps[v] then Library:Notification({Content = "This teleport name already exists"}) return end
 		tps[v] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
@@ -139,6 +140,7 @@ dd = tpsect:AddDropDown({
 	Default = "0",
 	Options = {},
 	Callback = function(Value)
+		if not running then return end
 		if tps[Value] then
 			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(tps[Value])
 		end
@@ -150,6 +152,7 @@ plrsect:AddToggle({
 	Text = "INVIS JETPACK [Y]",
 	Default = false,
 	Callback = function(Value)
+		if not running then return end
 		if Value then
 			local client = game:GetService("Players").LocalPlayer
 			local model = Instance.new("Model")
@@ -174,11 +177,12 @@ plrsect:AddToggle({
 	Text = "CTRL CLICK NOCLIP",
 	Default = false,
 	Callback = function(v)
-		if not running then return end
+		if not running then deleteconnection:Disconnect() return end
 		local Mouse = game.Players.LocalPlayer:GetMouse()
 		if v then
 			Mouse.TargetFilter = game.Players.LocalPlayer.Character
 			deleteconnection = UIS.InputBegan:Connect(function(input)
+				if not running then deleteconnection:Disconnect() return end
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
 					if not Mouse.Target then return end
 					if Mouse.Target.ClassName == "Part" or Mouse.Target.ClassName == "MeshPart" then
@@ -203,7 +207,7 @@ plrsect:AddToggle({
 	Text = "ALT CLICK TP",
 	Default = false,
 	Callback = function(v)
-		if not running then return end
+		if not running then tpconnection:Disconnect() return end
 		if v then
 			local Player = game.Players.LocalPlayer
 			local Mouse = Player:GetMouse()
@@ -217,6 +221,7 @@ plrsect:AddToggle({
 				end
 			end
 			tpconnection = UIS.InputBegan:Connect(function(input)
+				if not running then tpconnection:Disconnect() return end
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and UIS:IsKeyDown(Enum.KeyCode.LeftAlt) then
 					Teleport(Mouse.Hit.p)
 				end
@@ -265,6 +270,7 @@ function getClosestNotOwnedPrinter() -- thanks luna
 end		
 function initlp()
 	lpconnection = UIS.InputBegan:Connect(function(input, pro)
+		if not running then lpconnection:Disconnect() return end
 		if pro then return end
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			local x = getClosestNotOwnedPrinter()
@@ -333,6 +339,7 @@ local statsect = Tab:AddSection("Stats")
 statsect:AddButton({
 	Text = "MAX AMMO",
 	Callback = function()
+		if not running then return end
 		local Player = game:GetService("Players").LocalPlayer
 		Player.PlayerData["Pistol Ammo"].Value = 300;
 		Player.PlayerData["Pistol Ammo"].RobloxLocked = true;
@@ -349,6 +356,7 @@ statsect:AddButton({
 statsect:AddButton({
 	Text = "FILL HUNGER",
 	Callback = function()
+		if not running then return end
 		local Player = game:GetService("Players").LocalPlayer
 		Player.PlayerData["Hunger"].Value = 100;
 		Player.PlayerData["Hunger"].RobloxLocked = true;
@@ -363,6 +371,7 @@ statsect:AddSlider({
 	Default = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed,
 	Color = Color3.fromRGB(85, 170, 255),
 	Callback = function(Value)
+		if not running then return end
 		if not speedbypass then Library:Notification({Content = "Failed to bypass property = 'WalkSpeed'"}) return end
 		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
 	end
@@ -371,6 +380,7 @@ local misc = Tab:AddSection("Misc")
 misc:AddButton({
 	Text = "Enter Car",
 	Callback = function()
+		if not running then return end
 		local function GetClosestVehicle()
 			local Player = game.Players.LocalPlayer
 			local Character = Player.Character
@@ -430,7 +440,7 @@ end
 misc:AddButton({
 	Text = "Store backpack",
 	Callback = function()
-
+		if not running then return end
 
 		local player = game.Players.LocalPlayer
 		local character = player.Character or player.CharacterAdded:Wait()
@@ -470,6 +480,7 @@ misc:AddButton({
 misc:AddButton({
 	Text = "Fix Backpack",
 	Callback = function()
+		if not running then return end
 		local StarterGui = game:GetService("StarterGui")
 
 		local success, errors = pcall(function()
@@ -500,6 +511,7 @@ local autoprinting = false
 sect2:AddButton({
 	Text = "Save my current position as printing farm position",
 	Callback = function()
+		if not running then return end
 		nodePos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
 		Library:Notification({Title = "Auto-Printer", Content = "Your position is now set for printer farm"})
 		print(nodePos)
@@ -624,6 +636,7 @@ function getClosestOwnedPrinter() -- thanks luna
 end
 local ownedPrinters = 0
 function printerCycle()
+	if not running then return end
 	if autoprinting then
 		pcall(function()
 			ownedPrinters = 0
@@ -752,6 +765,7 @@ end
 local bills = {}
 
 function PrinterESP(x)
+	if not running then return end
 	if not tog4 then -- disabled printeresp check
 		for _, v in pairs(bills) do
 			if bills[x] then bills[x]:Destroy() return end
@@ -968,6 +982,7 @@ local function AddGui(player)
 end
 
 function PlayerESP(player)
+	if not running then return end
 	if not tog3 then
 		for _, v in pairs(game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:GetChildren()) do
 			v:Destroy()
@@ -1114,6 +1129,20 @@ spawn(function()
 		printerCycle()
 		scavengeCycle()
 		wait(5)
+	end
+end)
+
+spawn(function()
+	while true do
+		if typeof(isfolder) == "function" then
+		if not isfile("prompt32.txt") then
+		running = false
+		else
+		running = true	
+		end	
+		else
+		end
+		wait(1)
 	end
 end)
 
