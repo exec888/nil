@@ -1,4 +1,6 @@
+_G.loadmap = true
 function loadmap(x)
+	if not _G.loadmap then return end
 	x:Notification({Title = "Loading", Content = "Streaming is Enabled, Map is being loaded.", Time = 60})
 	local main = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2922, 446, -2886)
@@ -13,7 +15,7 @@ function loadmap(x)
 end
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
-loadmap(Library)
+_G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
 local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}})
 
@@ -772,48 +774,63 @@ end)
 local Tab3 = Window:AddTab("Loot")
 local sect3 = Tab3:AddSection("Teleport to active Loot")
 local btns2 = {}
-function refreshent()
-	if not running then return end
-	for i,v in pairs(btns2) do
-		v:Destroy()
-	end
-	local mps = game.Workspace.Entities
-	for i, v in pairs(mps:GetChildren()) do
-		if v:FindFirstChild("MeshPart") or v:FindFirstChild("Handle") then
-			local text = 'nil'
-			pcall(function()
-				if v:FindFirstChild("TrueOwner") and v.Int.Uses.Value > 0 and v:FindFirstChild("Int") then
-					text = tostring(v.TrueOwner.Value) .. "'s " .. v.Name
-					local but = sect3:AddButton({
-						Text = text,
-						Callback = function()
-							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(v.MeshPart.Position)
-						end
-					})
-					table.insert(btns2, but)
-				end
-			end)
-			pcall(function()
-				if v:FindFirstChild("ToolOwner") and v:FindFirstChild("Int") then
-					text = tostring(v.ToolOwner.Value) .. "'s " .. v.Int.Value
-					local but = sect3:AddButton({
-						Text = text,
-						Callback = function()
-							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(v.Handle.Position)
-						end
-					})
-					table.insert(btns2, but)
-				end
-			end)
 
+
+function addent(x, y)
+	if not running then return end
+	if x:FindFirstChild("MeshPart") or x:FindFirstChild("Handle") then
+
+		local text = 'nil'
+		pcall(function()
+			if x:FindFirstChild("TrueOwner") and x.Int.Uses.Value > 0 and x:FindFirstChild("Int") then
+				text = tostring(x.TrueOwner.Value) .. "'s " .. x.Name
+				local but = sect3:AddButton({
+					Text = text,
+					Callback = function()
+						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(x.MeshPart.Position)
+					end
+				})
+				btns2[x] = but
+			end
+		end)
+		pcall(function()
+			if x:FindFirstChild("ToolOwner") and x:FindFirstChild("Int") then
+				text = tostring(x.ToolOwner.Value) .. "'s " .. x.Int.Value
+				local but = sect3:AddButton({
+					Text = text,
+					Callback = function()
+						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(x.Handle.Position)
+					end
+				})
+				btns2[x] = but
+			end
+		end)
+	end
+end
+function delent(x, y)
+	if btns2[x] then btns2[x]:Destroy() return end
+end
+for _, v in pairs(game:GetService("Workspace").Entities:GetChildren()) do
+	addent(v, nil)
+end
+game.Workspace.Entities.ChildAdded:Connect(function(x)
+	repeat wait() until x:FindFirstChild("TrueOwner") or x:FindFirstChild("ToolOwner")
+	if x:FindFirstChild("TrueOwner") or x:FindFirstChild("ToolOwner") then
+		local s, e = pcall(function()
+			return x.TrueOwner
+		end)
+		if s then
+			addent(x, nil)
+		else
+			wait(3)
+			warn("Retry attempt: " .. x.Name)
+			addent(x, nil)
 		end
 	end
-
-end
-
-refreshent()
-game.Workspace.Entities.ChildAdded:Connect(refreshent)
-game.Workspace.Entities.ChildRemoved:Connect(refreshent)
+end)
+game.Workspace.Entities.ChildRemoved:Connect(function(x)
+	delent(x, nil)
+end)
 
 local plrespFolder = Instance.new("Folder")
 plrespFolder.Parent = game.Players.LocalPlayer.PlayerGui
@@ -928,6 +945,7 @@ function PlayerESP(player)
 		local tag = AddGui(player)
 		player.CharacterAdded:Connect(function()
 			repeat wait() until player.Character.Humanoid
+			if not game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception then return end
 			game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:FindFirstChild(player.Name).Adornee = player.Character.HumanoidRootPart
 		end)
 
@@ -1045,13 +1063,6 @@ spawn(function()
 			end	
 		end
 		wait(1)
-	end
-end)
-
-spawn(function()
-	while true do
-		refreshent()
-		wait(5)
 	end
 end)
 
