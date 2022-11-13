@@ -89,7 +89,7 @@ Sect:AddTextBox({
 		if tps[v] then Library:Notification({Content = "This teleport name already exists"}) return end
 		tps[v] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
 		dd:Refresh({v},false)
-		Library:Notification({Title = "Teleports", Content = "Your teleport is saved as '"..v.."'"})
+		Library:Notification({Title = "Teleports", Content = "Your current position for teleport is saved as '"..v.."'"})
 	end
 })
 dd = tpsect:AddDropDown({
@@ -315,7 +315,7 @@ statsect:AddButton({
 local speedbypass = false
 
 statsect:AddSlider({
-	Text = "WalkSpeed",
+	Text = "[RISKY] WalkSpeed",
 	Min = 0,
 	Max = 100,
 	Default = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed,
@@ -1108,4 +1108,4 @@ mt.__index = function(Instance, string)
 	return mmindex(Instance, string)
 end
 bypass = true
-speedbypass = false
+speedbypass = true
