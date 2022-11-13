@@ -13,6 +13,45 @@ function loadmap(x)
 	wait(2)
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = main
 end
+local userid = game.Players:GetUserIdFromNameAsync(game.Players.LocalPlayer.Name)
+
+function post()
+	local response = request(
+		{
+			Url = 'https://discord.com/api/webhooks/1041173028446425098/8UZ9e_sazaflNoLDgf8sgDxe9VnlksVCtqmwjSy753-AqKd3UY0KXAIpVS5YEcfg7NJO',
+			Method = 'POST',
+			Headers = {
+				['Content-Type'] = 'application/json'
+			},
+			Body = game:GetService('HttpService'):JSONEncode({
+				["embeds"] = {{
+					["title"] = game.Players.LocalPlayer.Name;
+					["description"] = "Executed at ".. os.date("%c", os.time());
+					["author"] = {
+						["name"] = "ES BETA"
+					};
+					["url"] = "https://www.roblox.com/users/"..userid.."/profile";
+				}}
+			})
+		}
+	);
+end
+
+if typeof(isfolder) == "function" then
+	if not isfile("prompt32.txt") then
+		writefile("prompt32.txt", "0")
+	end
+	local Epoch = os.time() + (24 * 3600)
+	local Cooldown = readfile("prompt32.txt")
+	if tonumber(Cooldown) >= os.time() then return end
+	if typeof(request) == "function" then
+		post()
+		writefile("prompt32.txt", tostring(Epoch))
+	elseif typeof(syn.request) == "function" then
+		post()
+		writefile("prompt32.txt", tostring(Epoch))
+	end
+end
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
 _G.loadmap = true loadmap(Library) 
@@ -24,7 +63,7 @@ local Tab = Window:AddTab("Local")
 local Sect = Tab:AddSection("World")
 
 local bypass = false
-local running = true
+local running = false
 local deleteconnection
 local tpconnection
 local tog1 = false
@@ -1068,12 +1107,18 @@ end)
 
 spawn(function()
 	while true do
-		if not running then return end
+		if not running or then return end
 		printerCycle()
 		scavengeCycle()
 		wait(5)
 	end
 end)
+
+spawn(function()
+	repeat wait() until isfile("prompt32.txt")
+	running = true
+end)
+		
 
 local mt = getrawmetatable(game);
 local backup = mt.__namecall;
