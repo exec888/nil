@@ -1107,7 +1107,7 @@ end)
 
 spawn(function()
 	while true do
-		if not running or then return end
+		if not running then return end
 		printerCycle()
 		scavengeCycle()
 		wait(5)
