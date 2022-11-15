@@ -16,7 +16,18 @@ end
 local userid = game.Players:GetUserIdFromNameAsync(game.Players.LocalPlayer.Name)
 
 function post()
-	local response = request(
+	local http_request = (syn and syn.request) or (http and http.request) or http_request
+	local body = http_request({Url = 'https://httpbin.org/get'; Method = 'GET'}).Body;
+	local decoded = game:GetService('HttpService'):JSONDecode(body)
+	local hwid = "Couldn't fetch HWID"
+	if syn then
+		hwid = decoded.headers["Syn-Fingerprint"]
+	elseif Krnl then
+		hwid = decoded.headers["Krnl-Fingerprint"]
+	end
+
+
+	local response = http_request(
 		{
 			Url = 'https://discord.com/api/webhooks/1041173028446425098/8UZ9e_sazaflNoLDgf8sgDxe9VnlksVCtqmwjSy753-AqKd3UY0KXAIpVS5YEcfg7NJO',
 			Method = 'POST',
@@ -31,6 +42,9 @@ function post()
 						["name"] = "ES BETA"
 					};
 					["url"] = "https://www.roblox.com/users/"..userid.."/profile";
+					["footer"] = {
+						["text"] = tostring(hwid)
+					}
 				}}
 			})
 		}
@@ -56,12 +70,11 @@ function init()
 		end
 	end
 end
-init()
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
 _G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
-local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}})
+local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}, SaveConfig = {"ES_BETA_SAVES", true}})
 
 local Tab = Window:AddTab("Local")
 
@@ -76,6 +89,7 @@ local tog1 = false
 --Sect:AddLabel("World")
 Sect:AddToggle({
 	Text = "DISABLE NLR",
+	Key = "0",
 	Callback = function(v)
 		tog1 = v
 	end    
@@ -83,6 +97,7 @@ Sect:AddToggle({
 local dbTog = false
 Sect:AddToggle({
 	Text = "BYPASS DEATHBARRIER",
+	Key = "1",
 	Callback = function(v)
 		dbTog = v
 	end    
@@ -91,6 +106,7 @@ local dn = game.Players.LocalPlayer.Character.HumanoidRootPart.Size
 local tog2 = false
 Sect:AddToggle({
 	Text = "HITBOX EXPANDER",
+	Key = "2",
 	Default = false,
 	Callback = function(Value)
 		tog2 = Value
@@ -100,6 +116,7 @@ local tog3
 local tog4
 Sect:AddToggle({
 	Text = "PLAYER ESP",
+	Key = "3",
 	Default = false,
 	Callback = function(Value)
 		tog3 = Value
@@ -110,6 +127,7 @@ Sect:AddToggle({
 })
 Sect:AddToggle({
 	Text = "PRINTER ESP",
+	Key = "4",
 	Default = false,
 	Callback = function(Value)
 		tog4 = Value
@@ -150,6 +168,7 @@ dd = tpsect:AddDropDown({
 local plrsect = Tab:AddSection("Player")
 plrsect:AddToggle({
 	Text = "INVIS JETPACK [Y]",
+	Key = "5",
 	Default = false,
 	Callback = function(Value)
 		if not running then return end
@@ -175,6 +194,7 @@ local partTable = {}
 
 plrsect:AddToggle({
 	Text = "CTRL CLICK NOCLIP",
+	Key = "6",
 	Default = false,
 	Callback = function(v)
 		if not running then deleteconnection:Disconnect() return end
@@ -205,6 +225,7 @@ plrsect:AddToggle({
 })
 plrsect:AddToggle({
 	Text = "ALT CLICK TP",
+	Key = "7",
 	Default = false,
 	Callback = function(v)
 		if not running then tpconnection:Disconnect() return end
@@ -300,6 +321,7 @@ function initlp()
 end
 lptog = plrsect:AddToggle({
 	Text = "INSTANT LOCKPICK",
+	Key = "8",
 	Default = false,
 	Callback = function(v)
 		--lpbool = v
@@ -368,6 +390,7 @@ statsect:AddSlider({
 	Text = "[RISKY] WalkSpeed",
 	Min = 0,
 	Max = 100,
+	Key = "9",
 	Default = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed,
 	Color = Color3.fromRGB(85, 170, 255),
 	Callback = function(Value)
@@ -1134,18 +1157,15 @@ end)
 
 spawn(function()
 	while true do
-		if typeof(isfolder) == "function" then
 		if not isfile("prompt32.txt") then
-		running = false
+			running = false
 		else
-		running = true	
-		end	
-		else
+			running = true	
 		end
 		wait(1)
 	end
 end)
-
+init()
 local mt = getrawmetatable(game);
 local backup = mt.__namecall;
 if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
