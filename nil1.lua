@@ -13,9 +13,9 @@ function loadmap(x)
 	wait(2)
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = main
 end
-local userid = game.Players:GetUserIdFromNameAsync(game.Players.LocalPlayer.Name)
 
 function post()
+	local userid = game.Players:GetUserIdFromNameAsync(game.Players.LocalPlayer.Name)
 	local http_request = (syn and syn.request) or (http and http.request) or http_request
 	local body = http_request({Url = 'https://httpbin.org/get'; Method = 'GET'}).Body;
 	local decoded = game:GetService('HttpService'):JSONDecode(body)
@@ -72,6 +72,7 @@ function init()
 end
 
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
+local rbx_join = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/rbxscripts/main/roblox_join.lua'))()
 _G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
 local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}, SaveConfig = {"ES_BETA_SAVES", true}})
@@ -1056,12 +1057,63 @@ function PlayerESP(player)
 end
 
 local Tab4 = Window:AddTab("Players")
+
+local sect4a = Tab4:AddSection("Game")
+sect4a:AddTextBox({
+	Text = "Join Player",
+	Default = "UserId",
+	Callback = function(userid)
+		Library:Notification({Title = 'Join Player', Content = "Searching...", Time = 120})
+		local var = rbx_join.Join(userid)
+		if var.Success then
+			Library:Notification({Title = '<font color="rgb(85, 170, 127)">Join Player</font>', Content = var.Message})
+		elseif not var.Success then
+			Library:Notification({Title = '<font color="rgb(227, 67, 67)">Join Player</font>', Content = var.Message})
+		end
+	end
+})
+local plrdrop = sect4a:AddDropDown({
+	Text = "Kill Player",
+	Default = "",
+	Options = {},
+	Callback = function(opt)
+		Library:Notification({Title = "Auto-Kill", Content = "Make sure to flag up when killing a friendly"})
+		local closesttt = game.Players[opt]--GetClosestPlayer()
+		print(closesttt)
+		local mag = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - closesttt.Character.HumanoidRootPart.Position).magnitude
+		if mag < 250 then
+			if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") and game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Handle.Reload then
+				repeat wait()
+					game:GetService("ReplicatedStorage").Events.MenuActionEvent:FireServer(33, game:GetService("Workspace")[closesttt.Name].HumanoidRootPart.CFrame, 1, game:GetService("Workspace")[closesttt.Name].Humanoid, 100, game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"))
+				until game:GetService("Workspace")[closesttt.Name].Humanoid.Health == 0
+			else
+				Library:Notification({Title = "Auto-Kill", Content = "Equip a weapon to kill"})
+			end
+		else
+			Library:Notification({Title = "Auto-Kill", Content = "Maximum range is 250 studs"})
+		end
+
+	end
+})
+
+local function loadplrlist()
+	local ServerPlayers = {}
+	for _, v in pairs(game:GetService("Players"):GetChildren()) do
+		if v.Name ~= game.Players.LocalPlayer.Name then
+			table.insert(ServerPlayers, v)
+		end
+	end
+	plrdrop:Refresh(ServerPlayers, true)
+end
+loadplrlist()
+
 local sect4 = Tab4:AddSection("Players")
 local btns3 = {}
 local specTog = false
 function refreshplrs(new)
 	if not running then return end
-	PlayerESP(new)
+	PlayerESP(new) 
+	loadplrlist()
 	if btns3[new.Name] then btns3[new.Name]:Destroy() return end
 	local Dropdown = sect4:AddDropDown({
 		Text = new.Name,
