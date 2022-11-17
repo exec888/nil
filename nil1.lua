@@ -88,6 +88,7 @@ OnClose = function()
 	game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:Destroy()
 	game.Players.LocalPlayer.PlayerGui.PrintersPerception:Destroy()
 end,
+Sounds = true
 })
 
 local Tab = Window:AddTab("Local")
