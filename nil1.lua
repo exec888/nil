@@ -70,21 +70,32 @@ function init()
 		end
 	end
 end
-
+local running = true
+local deleteconnection
+local tpconnection
+local lpconnection
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
 local rbx_join = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/rbxscripts/main/roblox_join.lua'))()
 _G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
-local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}, SaveConfig = {"ES_BETA_SAVES", true}})
+local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}, SaveConfig = {"ES_BETA_SAVES", true}, 
+OnClose = function()
+	running = false
+	deleteconnection = nil
+	tpconnection = nil
+	lpconnection = nil
+	Library:Destroy()
+	game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:Destroy()
+	game.Players.LocalPlayer.PlayerGui.PrintersPerception:Destroy()
+end,
+})
 
 local Tab = Window:AddTab("Local")
 
 local Sect = Tab:AddSection("World")
 
 local bypass = false
-local running = true
-local deleteconnection
-local tpconnection
+
 local tog1 = false
 
 --Sect:AddLabel("World")
@@ -253,7 +264,6 @@ plrsect:AddToggle({
 		end
 	end
 })
-local lpconnection
 local lptog
 function getClosestNotOwnedPrinter() -- thanks luna
 	local Player = game.Players.LocalPlayer
@@ -1078,14 +1088,13 @@ local plrdrop = sect4a:AddDropDown({
 	Options = {},
 	Callback = function(opt)
 		Library:Notification({Title = "Auto-Kill", Content = "Make sure to flag up when killing a friendly"})
-		local closesttt = game.Players[opt]--GetClosestPlayer()
-		print(closesttt)
-		local mag = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - closesttt.Character.HumanoidRootPart.Position).magnitude
+		local Target = game.Players[opt]--GetClosestPlayer()
+		local mag = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Target.Character.HumanoidRootPart.Position).magnitude
 		if mag < 250 then
 			if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") and game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Handle.Reload then
 				repeat wait()
-					game:GetService("ReplicatedStorage").Events.MenuActionEvent:FireServer(33, game:GetService("Workspace")[closesttt.Name].HumanoidRootPart.CFrame, 1, game:GetService("Workspace")[closesttt.Name].Humanoid, 100, game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"))
-				until game:GetService("Workspace")[closesttt.Name].Humanoid.Health == 0
+					game:GetService("ReplicatedStorage").Events.MenuActionEvent:FireServer(33, game:GetService("Workspace")[Target.Name].HumanoidRootPart.CFrame, 1, game:GetService("Workspace")[Target.Name].Humanoid, 100, game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"))
+				until game:GetService("Workspace")[Target.Name].Humanoid.Health == 0
 			else
 				Library:Notification({Title = "Auto-Kill", Content = "Equip a weapon to kill"})
 			end
