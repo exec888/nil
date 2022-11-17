@@ -84,7 +84,6 @@ OnClose = function()
 	deleteconnection = nil
 	tpconnection = nil
 	lpconnection = nil
-	Library:Destroy()
 	game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:Destroy()
 	game.Players.LocalPlayer.PlayerGui.PrintersPerception:Destroy()
 end,
