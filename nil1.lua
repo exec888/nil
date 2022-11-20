@@ -547,18 +547,6 @@ misc:AddButton({
 	end
 })
 
-misc:AddButton({
-	Text = "Delete Interface",
-	Callback = function()
-		running = false
-		deleteconnection = nil
-		tpconnection = nil
-		lpconnection = nil
-		Library:Destroy()
-		game.Players.LocalPlayer.PlayerGui.LocalPlayerPerception:Destroy()
-		game.Players.LocalPlayer.PlayerGui.PrintersPerception:Destroy()
-	end
-})
 local Tab2 = Window:AddTab("Farming")
 local sect2 = Tab2:AddSection("Farming")
 local nodePos = nil
