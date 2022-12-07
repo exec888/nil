@@ -1041,7 +1041,7 @@ local function loadplrlist()
 	local ServerPlayers = {}
 	for _, v in pairs(game:GetService("Players"):GetChildren()) do
 		if v.Name ~= game.Players.LocalPlayer.Name then
-			table.insert(ServerPlayers, v)
+			table.insert(ServerPlayers, v.Name)
 		end
 	end
 	plrdrop:Refresh(ServerPlayers, true)
