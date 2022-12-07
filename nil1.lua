@@ -74,7 +74,7 @@ local running = true
 local deleteconnection
 local tpconnection
 local lpconnection
-local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/exec888/s-/main/s.lua'))()
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/7Exec/main/source.lua'))()
 local rbx_join = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/rbxscripts/main/roblox_join.lua'))()
 _G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
