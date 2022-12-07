@@ -13,72 +13,15 @@ function loadmap(x)
 	wait(2)
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = main
 end
-
-function post()
-	local userid = game.Players:GetUserIdFromNameAsync(game.Players.LocalPlayer.Name)
-	local http_request = (syn and syn.request) or (http and http.request) or http_request
-	local body = http_request({Url = 'https://httpbin.org/get'; Method = 'GET'}).Body;
-	local decoded = game:GetService('HttpService'):JSONDecode(body)
-	local hwid = "Couldn't fetch HWID"
-	if syn then
-		hwid = decoded.headers["Syn-Fingerprint"]
-	elseif Krnl then
-		hwid = decoded.headers["Krnl-Fingerprint"]
-	end
-
-
-	local response = http_request(
-		{
-			Url = 'https://discord.com/api/webhooks/1041173028446425098/8UZ9e_sazaflNoLDgf8sgDxe9VnlksVCtqmwjSy753-AqKd3UY0KXAIpVS5YEcfg7NJO',
-			Method = 'POST',
-			Headers = {
-				['Content-Type'] = 'application/json'
-			},
-			Body = game:GetService('HttpService'):JSONEncode({
-				["embeds"] = {{
-					["title"] = game.Players.LocalPlayer.Name;
-					["description"] = "Executed at ".. os.date("%c", os.time());
-					["author"] = {
-						["name"] = "ES BETA"
-					};
-					["url"] = "https://www.roblox.com/users/"..userid.."/profile";
-					["footer"] = {
-						["text"] = tostring(hwid)
-					}
-				}}
-			})
-		}
-	);
-end
-
-function init()
-	if typeof(isfolder) == "function" then
-		if not isfile("prompt32.txt") then
-			writefile("prompt32.txt", "0")
-		else
-
-		end
-		local Epoch = os.time() + (24 * 3600)
-		local Cooldown = readfile("prompt32.txt")
-		if tonumber(Cooldown) >= os.time() then return end
-		if typeof(request) == "function" then
-			post()
-			writefile("prompt32.txt", tostring(Epoch))
-		elseif typeof(syn.request) == "function" then
-			post()
-			writefile("prompt32.txt", tostring(Epoch))
-		end
-	end
-end
 local running = true
 local deleteconnection
 local tpconnection
 local lpconnection
-local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/7Exec/main/source.lua'))()
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/Exec-UI-Library/main/src.lua'))()
 local rbx_join = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/rbxscripts/main/roblox_join.lua'))()
 _G.loadmap = true loadmap(Library) 
 local UIS = game:GetService("UserInputService")
-local Window = Library:Window({Name = "ESDRP", ScriptName = "Admin", Creator = "Edd_E & Rylock", Hotkey = {"Semicolon", false}, SaveConfig = {"ES_BETA_SAVES", true}, 
+local Window = Library:Window({Name = "ESDRP", Script = "Admin", Creator = "Edd_E & Rylock", Hotkey = {Key = Enum.KeyCode.Semicolon, Enabled=true}, Saves = {Folder = "ES_BETA_SAVES", Enabled = true}, 
 OnClose = function()
 	running = false
 	deleteconnection = nil
@@ -90,9 +33,9 @@ end,
 Sounds = true
 })
 
-local Tab = Window:AddTab("Local")
+local Tab = Window:AddTab{Name="Local"}
 
-local Sect = Tab:AddSection("World")
+local Sect = Tab:LeftSection("World")
 
 local bypass = false
 
@@ -100,7 +43,7 @@ local tog1 = false
 
 --Sect:AddLabel("World")
 Sect:AddToggle({
-	Text = "DISABLE NLR",
+	Name = "DISABLE NLR",
 	Key = "0",
 	Callback = function(v)
 		tog1 = v
@@ -108,7 +51,7 @@ Sect:AddToggle({
 })
 local dbTog = false
 Sect:AddToggle({
-	Text = "BYPASS DEATHBARRIER",
+	Name = "BYPASS DEATHBARRIER",
 	Key = "1",
 	Callback = function(v)
 		dbTog = v
@@ -117,7 +60,7 @@ Sect:AddToggle({
 local dn = game.Players.LocalPlayer.Character.HumanoidRootPart.Size
 _G.tog2 = false
 Sect:AddToggle({
-	Text = "HITBOX EXPANDER",
+	Name = "HITBOX EXPANDER",
 	Key = "2",
 	Default = false,
 	Callback = function(Value)
@@ -127,7 +70,7 @@ Sect:AddToggle({
 local tog3
 local tog4
 Sect:AddToggle({
-	Text = "PLAYER ESP",
+	Name = "PLAYER ESP",
 	Key = "3",
 	Default = false,
 	Callback = function(Value)
@@ -138,7 +81,7 @@ Sect:AddToggle({
 	end
 })
 Sect:AddToggle({
-	Text = "PRINTER ESP",
+	Name = "PRINTER ESP",
 	Key = "4",
 	Default = false,
 	Callback = function(Value)
@@ -150,12 +93,12 @@ Sect:AddToggle({
 })
 
 
-local tpsect = Tab:AddSection("Teleports")
+local tpsect = Tab:LeftSection("Teleports")
 local tps={}
 local dd
-Sect:AddTextBox({
-	Text = "Save teleport location",
-	Default = "Name?",
+tpsect:AddTextBox({
+	Name = "Save teleport location",
+	Placeholder = "Name?",
 	Callback = function(v)
 		if not running then return end
 		if v == "" or v == "Name?" then v = #tps+1 end
@@ -165,10 +108,9 @@ Sect:AddTextBox({
 		Library:Notification({Title = "Teleports", Content = "Your current position for teleport is saved as '"..v.."'"})
 	end
 })
-dd = tpsect:AddDropDown({
-	Text = "Teleports",
-	Default = "0",
-	Options = {},
+dd = tpsect:AddDropdown({
+	Name = "Teleports",
+	Placeholder = "Name..",
 	Callback = function(Value)
 		if not running then return end
 		if tps[Value] then
@@ -177,9 +119,9 @@ dd = tpsect:AddDropDown({
 	end
 })
 
-local plrsect = Tab:AddSection("Player")
+local plrsect = Tab:LeftSection("Player")
 plrsect:AddToggle({
-	Text = "INVIS JETPACK [Y]",
+	Name = "INVIS JETPACK [Y]",
 	Key = "5",
 	Default = false,
 	Callback = function(Value)
@@ -205,7 +147,7 @@ plrsect:AddToggle({
 local partTable = {}
 
 plrsect:AddToggle({
-	Text = "CTRL CLICK NOCLIP",
+	Name = "CTRL CLICK NOCLIP",
 	Key = "6",
 	Default = false,
 	Callback = function(v)
@@ -236,7 +178,7 @@ plrsect:AddToggle({
 	end    
 })
 plrsect:AddToggle({
-	Text = "ALT CLICK TP",
+	Name = "ALT CLICK TP",
 	Key = "7",
 	Default = false,
 	Callback = function(v)
@@ -331,7 +273,7 @@ function initlp()
 
 end
 lptog = plrsect:AddToggle({
-	Text = "INSTANT LOCKPICK",
+	Name = "INSTANT LOCKPICK",
 	Key = "8",
 	Default = false,
 	Callback = function(v)
@@ -368,9 +310,9 @@ lptog = plrsect:AddToggle({
 		end
 	end
 })
-local statsect = Tab:AddSection("Stats")
+local statsect = Tab:RightSection("Stats")
 statsect:AddButton({
-	Text = "MAX AMMO",
+	Name = "MAX AMMO",
 	Callback = function()
 		if not running then return end
 		local Player = game:GetService("Players").LocalPlayer
@@ -387,7 +329,7 @@ statsect:AddButton({
 	end
 })
 statsect:AddButton({
-	Text = "FILL HUNGER",
+	Name = "FILL HUNGER",
 	Callback = function()
 		if not running then return end
 		local Player = game:GetService("Players").LocalPlayer
@@ -398,7 +340,7 @@ statsect:AddButton({
 local speedbypass = false
 
 statsect:AddSlider({
-	Text = "[RISKY] WalkSpeed",
+	Name = "[RISKY] WalkSpeed",
 	Min = 0,
 	Max = 100,
 	Key = "9",
@@ -410,9 +352,9 @@ statsect:AddSlider({
 		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
 	end
 })
-local misc = Tab:AddSection("Misc")
+local misc = Tab:RightSection("Misc")
 misc:AddButton({
-	Text = "Enter Car",
+	Name = "Enter Car",
 	Callback = function()
 		if not running then return end
 		local function GetClosestVehicle()
@@ -441,7 +383,7 @@ misc:AddButton({
 	end
 })
 misc:AddButton({
-	Text = "Make it Day",
+	Name = "Make it Day",
 	Callback = function()
 		game.Lighting.Condition.Value = "Day"
 		game.Lighting:SetMinutesAfterMidnight(720)
@@ -493,7 +435,7 @@ function GetClosestItem()
 	return Target
 end
 misc:AddButton({
-	Text = "Store backpack",
+	Name = "Store backpack",
 	Callback = function()
 		if not running then return end
 
@@ -533,7 +475,7 @@ misc:AddButton({
 	end
 })
 misc:AddButton({
-	Text = "Fix Backpack",
+	Name = "Fix Backpack",
 	Callback = function()
 		if not running then return end
 		local StarterGui = game:GetService("StarterGui")
@@ -547,12 +489,12 @@ misc:AddButton({
 	end
 })
 
-local Tab2 = Window:AddTab("Farming")
-local sect2 = Tab2:AddSection("Farming")
+local Tab2 = Window:AddTab{Name="Farming"}
+local sect2 = Tab2:LeftSection("Farming")
 local nodePos = nil
 local autoprinting = false
 sect2:AddButton({
-	Text = "Save my current position as printing farm position",
+	Name = "Save my current position as printing farm position",
 	Callback = function()
 		if not running then return end
 		nodePos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
@@ -561,7 +503,7 @@ sect2:AddButton({
 	end
 })
 sect2:AddToggle({
-	Text = "Auto-Printing",
+	Name = "Auto-Printing",
 	Default = false,
 	Callback = function(Bool)
 		if nodePos == nil then
@@ -573,14 +515,14 @@ sect2:AddToggle({
 })
 local autoscav = false
 sect2:AddToggle({
-	Text = "Auto-Aureus",
+	Name = "Auto-Aureus",
 	Default = false,
 	Callback = function(Bool)
 		autoscav = Bool
 	end
 })
 --[[sect2:AddTextBox({
-	Text = "Auto-Printer calculator",
+	Name = "Auto-Printer calculator",
 	Default = "$ Target..",
 	Callback = function(v)
 		local Value = tonumber(v)
@@ -825,13 +767,13 @@ end
 function DelPrinterESP(x)
 	if bills[x] then bills[x]:Destroy() return end
 end
-local prints = Tab2:AddSection("Teleport to active printers")
+local prints = Tab2:RightSection("Teleport to active printers")
 local btns = {}
 function addprinter(x, y)
 	if not running then return end
 	if x:FindFirstChild("Main") and x:FindFirstChild("Int") and x:FindFirstChild("TrueOwner") then
 		local but = prints:AddButton({
-			Text = tostring(x.TrueOwner.Value) .. "'s printer, $" .. x.Int.Money.Value,
+			Name = tostring(x.TrueOwner.Value) .. "'s printer, $" .. x.Int.Money.Value,
 			Callback = function()
 				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(x.Main.Position)
 			end
@@ -870,8 +812,8 @@ game.Workspace.MoneyPrinters.ChildRemoved:Connect(function(x)
 	DelPrinterESP(x)
 end)
 
-local Tab3 = Window:AddTab("Loot")
-local sect3 = Tab3:AddSection("Teleport to active Loot")
+local Tab3 = Window:AddTab({Name="Loot"})
+local sect3 = Tab3:LeftSection("Teleport to active Loot")
 local btns2 = {}
 
 
@@ -884,7 +826,7 @@ function addent(x, y)
 			if x:FindFirstChild("TrueOwner") and x.Int.Uses.Value > 0 and x:FindFirstChild("Int") then
 				text = tostring(x.TrueOwner.Value) .. "'s " .. x.Name
 				local but = sect3:AddButton({
-					Text = text,
+					Name = text,
 					Callback = function()
 						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(x.MeshPart.Position)
 					end
@@ -896,7 +838,7 @@ function addent(x, y)
 			if x:FindFirstChild("ToolOwner") and x:FindFirstChild("Int") then
 				text = tostring(x.ToolOwner.Value) .. "'s " .. x.Int.Value
 				local but = sect3:AddButton({
-					Text = text,
+					Name = text,
 					Callback = function()
 						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = CFrame.new(x.Handle.Position)
 					end
@@ -1054,14 +996,15 @@ function PlayerESP(player)
 	end
 end
 
-local Tab4 = Window:AddTab("Players")
+local Tab4 = Window:AddTab({Name="Players"})
 
-local sect4a = Tab4:AddSection("Game")
+local sect4a = Tab4:LeftSection("Game")
 sect4a:AddTextBox({
-	Text = "Join Player",
+	Name = "Join Player",
 	Default = "UserId",
+	PressEnter = true,
 	Callback = function(userid)
-		Library:Notification({Title = 'Join Player', Content = "Searching...", Time = 120})
+		Library:Notification({Title = 'Join Player', Content = "Searching..."})
 		local var = rbx_join.Join(userid)
 		if var.Success then
 			Library:Notification({Title = '<font color="rgb(85, 170, 127)">Join Player</font>', Content = var.Message})
@@ -1070,10 +1013,11 @@ sect4a:AddTextBox({
 		end
 	end
 })
-local plrdrop = sect4a:AddDropDown({
-	Text = "Kill Player",
+local plrdrop = sect4a:AddDropdown({
+	Name = "Kill Player",
 	Default = "",
 	Options = {},
+	Placeholder = "Player..",
 	Callback = function(opt)
 		Library:Notification({Title = "Auto-Kill", Content = "Make sure to flag up when killing a friendly"})
 		local Target = game.Players[opt]--GetClosestPlayer()
@@ -1104,7 +1048,7 @@ local function loadplrlist()
 end
 loadplrlist()
 
-local sect4 = Tab4:AddSection("Players")
+local sect4 = Tab4:RightSection("Players")
 local btns3 = {}
 local specTog = false
 function refreshplrs(new)
@@ -1112,8 +1056,9 @@ function refreshplrs(new)
 	PlayerESP(new) 
 	loadplrlist()
 	if btns3[new.Name] then btns3[new.Name]:Destroy() return end
-	local Dropdown = sect4:AddDropDown({
-		Text = new.Name,
+	local Dropdown = sect4:AddDropdown({
+		Name = new.Name,
+		Placeholder = "option..",
 		Options = {"Teleport", "Spectate/Unspectate", "Stats"},
 		Callback = function(opt)
 			if opt == "Teleport" then
@@ -1224,18 +1169,6 @@ spawn(function()
 		wait(5)
 	end
 end)
-
-spawn(function()
-	while true do
-		if not isfile("prompt32.txt") then
-			running = false
-		else
-			running = true	
-		end
-		wait(1)
-	end
-end)
-init()
 local mt = getrawmetatable(game);
 local backup = mt.__namecall;
 if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
