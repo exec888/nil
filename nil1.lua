@@ -136,7 +136,7 @@ plrsect:AddToggle({
 			local str = Instance.new("StringValue")
 			str.Parent = model
 			str.Name = "RealValue"
-			str.Value = "Static Jetpack"
+			str.Value = "Jetpack"
 			model.Parent = game:GetService("Workspace")[client.Name].Util
 		else
 			local client = game:GetService("Players").LocalPlayer
